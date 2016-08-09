@@ -162,7 +162,13 @@ module ActiveRecord
               scope.includes! item.includes_values
             end
 
-            scope.unscope!(*item.unscope_values)
+            # TEACHSTONE_FORK
+            #   commenting out the line below to revert commit
+            #   https://github.com/rails/rails/commit/449241cc
+            #   which created problems with unscoped associations on belongs_to relations dropping
+            #   scope for has_many and chained associations
+            # scope.unscope!(*item.unscope_values)
+            # end of TEACHSTONE_FORK commented block
             scope.where_values += item.where_values
             scope.bind_values  += item.bind_values
             scope.order_values |= item.order_values

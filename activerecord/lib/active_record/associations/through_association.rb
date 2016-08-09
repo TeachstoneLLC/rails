@@ -15,6 +15,18 @@ module ActiveRecord
           scope = super
           reflection.chain.drop(1).each do |reflection|
             relation = reflection.klass.all
+
+            # TEACHSTONE_FORK
+            #   adding this code block to revert commit
+            #   https://github.com/rails/rails/commit/449241cc
+            #   which created problems with unscoped associations on belongs_to relations dropping
+            #   scope for has_many and chained associations
+            reflection_scope = reflection.scope
+            if reflection_scope && reflection_scope.arity.zero?
+              relation = relation.merge(reflection_scope)
+            end
+            # end of TEACHSTONE_FORK added block
+
             scope.merge!(
               relation.except(:select, :create_with, :includes, :preload, :joins, :eager_load)
             )
